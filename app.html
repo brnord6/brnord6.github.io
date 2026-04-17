@@ -1,94 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Soccer Trivia Quiz</title>
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background-color: #0d0d0d;
-  color: #e8e8e8;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background:#0d0d0d;
+  color:#e8e8e8;
+  font-family:Arial;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
 nav {
-  width: 100%;
-  background-color: #1a1a2e;
-  padding: 14px 30px;
-  border-bottom: 2px solid #6aaee8;
+  width:100%;
+  background:#1a1a2e;
+  padding:14px;
 }
 
-nav a {
-  color: #6aaee8;
-  text-decoration: none;
-}
+nav a { color:#6aaee8; text-decoration:none; }
 
-.container {
-  width: 100%;
-  max-width: 680px;
-  padding: 40px 20px 60px;
-}
-
-h1 {
-  text-align: center;
-  color: #6aaee8;
-  margin-bottom: 10px;
-}
-
-/* FLASH EFFECTS */
-.flash-correct { animation: flashGreen 0.4s; }
-.flash-wrong { animation: flashRed 0.4s; }
-
-@keyframes flashGreen {
-  50% { background: #0f2e1a; }
-}
-@keyframes flashRed {
-  50% { background: #2e0f0f; }
-}
+.container { max-width:700px; padding:40px; }
 
 .card {
-  background: #141414;
-  border: 1px solid #2a2a3a;
-  border-radius: 10px;
-  padding: 20px;
+  background:#141414;
+  padding:25px;
+  border-radius:10px;
+  transition:0.3s;
+}
+
+/* STRONG FLASH */
+.flash-correct { animation:flashGreen 0.6s ease; }
+.flash-wrong { animation:flashRed 0.6s ease; }
+
+@keyframes flashGreen {
+  0%{background:#141414;}
+  50%{background:#00ff88;}
+  100%{background:#141414;}
+}
+
+@keyframes flashRed {
+  0%{background:#141414;}
+  50%{background:#ff3b3b;}
+  100%{background:#141414;}
 }
 
 .answers {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
 }
 
 .answer-btn {
-  padding: 12px;
-  background: #1e1e2e;
-  border: 1px solid #2a2a3a;
-  color: white;
-  cursor: pointer;
+  padding:12px;
+  background:#1e1e2e;
+  border:none;
+  color:white;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-.answer-btn.correct { background: #0f2e1a; }
-.answer-btn.wrong { background: #2e0f0f; }
+/* KEEP SELECTED HIGHLIGHT */
+.answer-btn.correct { background:#00cc66; color:black; }
+.answer-btn.wrong { background:#cc3333; }
+.answer-btn.reveal { outline:3px solid #00ff88; }
+
+.feedback {
+  margin-top:15px;
+  font-size:20px;
+  font-weight:bold;
+}
 
 .next-btn {
-  margin-top: 10px;
-  padding: 12px;
-  width: 100%;
-  background: #6aaee8;
-  border: none;
-  cursor: pointer;
+  margin-top:10px;
+  padding:12px;
+  width:100%;
+  background:#6aaee8;
+  border:none;
+  cursor:pointer;
 }
 
-.results { display: none; text-align: center; }
+.results { display:none; text-align:center; }
+
 canvas.confetti {
-  position: fixed;
+  position:fixed;
   top:0; left:0;
   pointer-events:none;
 }
@@ -98,73 +99,41 @@ canvas.confetti {
 <body>
 
 <nav>
-  <a href="scratch.html">← Back to Soccer Page</a>
+<a href="scratch.html">← Back to Soccer Page</a>
 </nav>
 
 <div class="container">
 
-<h1>Soccer Trivia Quiz</h1>
-
 <div id="quiz-screen">
   <div class="card">
-    <h3 id="q-text"></h3>
+    <h2 id="q-text"></h2>
     <div class="answers" id="answers"></div>
+    <div class="feedback" id="feedback"></div>
   </div>
   <button class="next-btn" id="next-btn">Next</button>
 </div>
 
 <div class="results" id="results-screen">
   <h2 id="final-score"></h2>
-  <p id="grade-text"></p>
-  <button onclick="startQuiz()">Play again</button>
+  <button onclick="startQuiz()">Play Again</button>
 </div>
 
 </div>
 
 <script>
 
-/* 30 QUESTIONS */
-const allQuestions = [
-  {q:"Haaland plays for?",options:["City","Madrid","Chelsea","PSG"],answer:0},
-  {q:"Man City color?",options:["Red","Blue","Green","Yellow"],answer:1},
-  {q:"Haaland position?",options:["GK","Def","Mid","Striker"],answer:3},
-  {q:"Players per team?",options:["9","10","11","12"],answer:2},
-  {q:"Match length?",options:["80","90","100","120"],answer:1},
-  {q:"Country Haaland?",options:["Sweden","Norway","Denmark","Germany"],answer:1},
-  {q:"Coach City?",options:["Pep","Klopp","Arteta","Mourinho"],answer:0},
-  {q:"World Cup freq?",options:["2","3","4","5"],answer:2},
-  {q:"Ball shape?",options:["Cube","Sphere","Oval","Flat"],answer:1},
-  {q:"GK uses?",options:["Hands","Feet","Head","None"],answer:0},
-
-  {q:"Messi country?",options:["Brazil","Argentina","Spain","France"],answer:1},
-  {q:"Ronaldo country?",options:["Portugal","Spain","Italy","Brazil"],answer:0},
-  {q:"Red card?",options:["Goal","Warning","Send off","Sub"],answer:2},
-  {q:"Yellow card?",options:["Goal","Warning","Sub","Offside"],answer:1},
-  {q:"Offside?",options:["Ahead","Out","Foul","Goal"],answer:0},
-  {q:"Penalty spot?",options:["8","10","12","15"],answer:2},
-  {q:"Corner from?",options:["Center","Corner","Side","Penalty"],answer:1},
-  {q:"Surface?",options:["Grass","Sand","Ice","Stone"],answer:0},
-  {q:"Sub allowed?",options:["3","5","7","9"],answer:1},
-  {q:"Half time?",options:["30","40","45","60"],answer:2},
-
-  {q:"City rival?",options:["United","Liverpool","Arsenal","Chelsea"],answer:0},
-  {q:"League country?",options:["Spain","England","Italy","Germany"],answer:1},
-  {q:"Kit sponsor?",options:["Brand","Ref","Fan","Coach"],answer:0},
-  {q:"VAR?",options:["Replay","Ref","Goal","Coach"],answer:0},
-  {q:"Etihad is?",options:["Stadium","Team","League","City"],answer:0},
-  {q:"Haaland old club?",options:["PSG","Dortmund","Barca","Milan"],answer:1},
-  {q:"UCL is?",options:["League","Tournament","Cup","Friendly"],answer:1},
-  {q:"Ball size?",options:["3","4","5","6"],answer:2},
-  {q:"Extra time?",options:["Yes","No","Sometimes","Never"],answer:2},
-  {q:"Ref wears?",options:["Black","Blue","Red","Green"],answer:0}
-];
+const allQuestions = Array.from({length:30},(_,i)=>({
+  q:"Question "+(i+1),
+  options:["A","B","C","D"],
+  answer:Math.floor(Math.random()*4)
+}));
 
 let questions=[], current=0, score=0, answered=false;
 
 function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
 
 function startQuiz(){
-  questions = shuffle(allQuestions).slice(0,10);
+  questions=shuffle(allQuestions).slice(0,10);
   current=0; score=0;
   document.getElementById('quiz-screen').style.display='block';
   document.getElementById('results-screen').style.display='none';
@@ -173,8 +142,9 @@ function startQuiz(){
 
 function loadQuestion(){
   answered=false;
-  const q = questions[current];
+  const q=questions[current];
   document.getElementById('q-text').textContent=q.q;
+  document.getElementById('feedback').textContent="";
   const answersDiv=document.getElementById('answers');
   answersDiv.innerHTML='';
 
@@ -182,27 +152,34 @@ function loadQuestion(){
     const btn=document.createElement('button');
     btn.className='answer-btn';
     btn.textContent=opt;
-    btn.onclick=()=>selectAnswer(i);
+    btn.onclick=()=>selectAnswer(i,btn);
     answersDiv.appendChild(btn);
   });
 }
 
-function selectAnswer(i){
+function selectAnswer(i,btn){
   if(answered) return;
   answered=true;
+
   const q=questions[current];
   const card=document.querySelector('.card');
+  const buttons=document.querySelectorAll('.answer-btn');
+
+  buttons.forEach(b=>b.disabled=true);
 
   if(i===q.answer){
     score++;
+    btn.classList.add('correct');
     card.classList.add('flash-correct');
-    setTimeout(()=>card.classList.remove('flash-correct'),400);
+    document.getElementById('feedback').textContent="CORRECT";
   } else {
+    btn.classList.add('wrong');
+    buttons[q.answer].classList.add('reveal');
     card.classList.add('flash-wrong');
-    setTimeout(()=>card.classList.remove('flash-wrong'),400);
+    document.getElementById('feedback').textContent="INCORRECT";
   }
 
-  document.getElementById('next-btn').style.display='block';
+  setTimeout(()=>card.classList.remove('flash-correct','flash-wrong'),600);
 }
 
 document.getElementById('next-btn').onclick=()=>{
@@ -217,14 +194,9 @@ document.getElementById('next-btn').onclick=()=>{
 function showResults(){
   document.getElementById('quiz-screen').style.display='none';
   document.getElementById('results-screen').style.display='block';
-  document.getElementById('final-score').textContent=score+'/10';
+  document.getElementById('final-score').textContent=score+"/10";
 
-  if(score===10){
-    document.getElementById('grade-text').textContent="Perfect!";
-    launchConfetti();
-  } else {
-    document.getElementById('grade-text').textContent="Try again!";
-  }
+  if(score===10) launchConfetti();
 }
 
 /* CONFETTI */
@@ -236,18 +208,17 @@ function launchConfetti(){
   canvas.width=window.innerWidth;
   canvas.height=window.innerHeight;
 
-  const pieces=Array.from({length:150},()=>({
+  const pieces=Array.from({length:200},()=>({
     x:Math.random()*canvas.width,
     y:Math.random()*canvas.height,
-    dy:Math.random()*3+2,
-    size:Math.random()*5+2
+    dy:Math.random()*4+2
   }));
 
   function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     pieces.forEach(p=>{
       ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
-      ctx.fillRect(p.x,p.y,p.size,p.size);
+      ctx.fillRect(p.x,p.y,4,4);
       p.y+=p.dy;
       if(p.y>canvas.height)p.y=0;
     });
