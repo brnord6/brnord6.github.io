@@ -1,0 +1,204 @@
+/* scratch-styles.css — Brandt's Soccer Page Stylesheet */
+
+/* === 1. Global / Body === */
+body {
+  background-color: #0d0d0d;
+  color: #e8e8e8;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.7;
+}
+
+/* === 2. Navigation Bar === */
+#navbar {
+  background-color: #1a1a2e;
+  padding: 14px 30px;
+  display: flex;
+  gap: 24px;
+  border-bottom: 2px solid #6aaee8;
+}
+
+#navbar a {
+  color: #6aaee8;
+  text-decoration: none;
+  font-size: 15px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+#navbar a:hover {
+  color: #97c4f0;
+  text-decoration: underline;
+}
+
+/* === 3. Hero Section === */
+#hero {
+  background-color: #12204a;
+  text-align: center;
+  padding: 80px 20px 60px;
+  border-bottom: 3px solid #6aaee8;
+}
+
+#hero h1 {
+  font-size: 3rem;
+  color: #6aaee8;
+  font-family: Georgia, 'Times New Roman', serif;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+}
+
+#hero .subtitle {
+  font-size: 1.15rem;
+  color: #b0c8e0;
+  margin-bottom: 28px;
+}
+
+.scroll-btn {
+  display: inline-block;
+  background-color: #6aaee8;
+  color: #0d0d0d;
+  padding: 10px 26px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+
+.scroll-btn:hover {
+  background-color: #97c4f0;
+}
+
+/* === 4. Content Sections === */
+.section {
+  padding: 50px 20px;
+  border-bottom: 1px solid #222;
+}
+
+/* === 5. Content Divs (layout blocks) === */
+.content-div {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #141414;
+  border: 1px solid #2a2a3a;
+  border-radius: 8px;
+  padding: 32px 36px;
+}
+
+.content-div h2 {
+  font-size: 1.6rem;
+  color: #6aaee8;
+  font-family: Georgia, 'Times New Roman', serif;
+  margin-top: 0;
+  border-bottom: 1px solid #2a2a3a;
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+}
+
+/* === 6. Club Badge Image === */
+.club-badge {
+  display: block;
+  margin: 16px auto;
+  width: 140px;
+  height: auto;
+  filter: drop-shadow(0 0 12px rgba(106, 174, 232, 0.4));
+}
+
+/* === 7. Nested Lists === */
+.top-list {
+  font-size: 1rem;
+  color: #e8e8e8;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding-left: 20px;
+}
+
+.top-list > li {
+  margin-bottom: 14px;
+  font-weight: 500;
+  color: #97c4f0;
+}
+
+.sub-list {
+  color: #c0c0c0;
+  font-weight: 400;
+  margin-top: 6px;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.sub-list li {
+  margin-bottom: 4px;
+}
+
+/* === 8. YouTube Video Wrapper === */
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  margin-top: 18px;
+  border-radius: 6px;
+  border: 1px solid #2a2a3a;
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* === 9. Tableau Wrapper === */
+.tableau-wrapper {
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #2a2a3a;
+}
+
+/* === 10. Anchor/Jump Links Div === */
+.anchor-links {
+  text-align: center;
+}
+
+.jump-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.jump-list a {
+  color: #6aaee8;
+  text-decoration: none;
+  font-size: 15px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  border: 1px solid #6aaee8;
+  padding: 6px 18px;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.jump-list a:hover {
+  background-color: #6aaee8;
+  color: #0d0d0d;
+}
+
+/* === 11. Footer === */
+#footer {
+  background-color: #1a1a2e;
+  text-align: center;
+  padding: 22px;
+  color: #6aaee8;
+  font-size: 14px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  border-top: 2px solid #6aaee8;
+}
