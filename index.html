@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brandt Nordhagen | Resume</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #f9f7f4;
+      --warm-gray: #e8e4df;
+      --mid-gray: #9c9488;
+      --dark: #1e1c1a;
+      --accent: #8b6f47;
+      --light-accent: #d4b896;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--cream);
+      color: var(--dark);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── Header ── */
+    header {
+      background-color: var(--dark);
+      color: var(--cream);
+      padding: 64px 0 52px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 60px,
+        rgba(255,255,255,0.015) 60px,
+        rgba(255,255,255,0.015) 61px
+      );
+    }
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.4rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      position: relative;
+    }
+    header p {
+      color: var(--light-accent);
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-top: 6px;
+      position: relative;
+    }
+    .contact-bar {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .contact-bar a {
+      color: rgba(249,247,244,0.65);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+    }
+    .contact-bar a:hover { color: var(--light-accent); }
+    .contact-bar span {
+      color: rgba(249,247,244,0.65);
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+    }
+    .contact-divider {
+      color: rgba(249,247,244,0.25);
+    }
+
+    /* ── Layout ── */
+    .resume-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+
+    /* ── Section ── */
+    .resume-section {
+      margin-bottom: 52px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .section-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--dark);
+      white-space: nowrap;
+    }
+    .section-rule {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--accent), var(--warm-gray));
+    }
+
+    /* ── Entry ── */
+    .entry {
+      padding: 22px 0;
+      border-bottom: 1px solid var(--warm-gray);
+    }
+    .entry:last-child { border-bottom: none; }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .entry-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .entry-date {
+      font-size: 0.78rem;
+      color: var(--mid-gray);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      padding-top: 3px;
+    }
+    .entry-sub {
+      font-size: 0.83rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .entry ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+    .entry ul li {
+      color: #3a3632;
+      font-size: 0.9rem;
+      line-height: 1.75;
+      margin-bottom: 2px;
+    }
+    .entry ul li::marker { color: var(--light-accent); }
+
+    /* ── Skills grid ── */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 4px;
+    }
+    .skill-pill {
+      background-color: var(--dark);
+      color: var(--cream);
+      font-size: 0.78rem;
+      letter-spacing: 0.07em;
+      padding: 6px 14px;
+      border-radius: 2px;
+      font-weight: 400;
+    }
+
+    /* ── Honors ── */
+    .honors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      padding-top: 4px;
+    }
+    .honor-item {
+      background: white;
+      border: 1px solid var(--warm-gray);
+      border-left: 3px solid var(--accent);
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #3a3632;
+      border-radius: 0 3px 3px 0;
+    }
+
+    /* ── Education ── */
+    .edu-entry {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--warm-gray);
+    }
+    .edu-entry:last-child { border-bottom: none; }
+
+    /* ── Footer ── */
+    footer {
+      background-color: var(--dark);
+      color: var(--mid-gray);
+      text-align: center;
+      padding: 20px;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 2.4rem; }
+      .entry-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <h1>Brandt Nordhagen</h1>
+  <p>Business &amp; Finance</p>
+  <div class="contact-bar">
+    <span>Provo, UT</span>
+    <span class="contact-divider">·</span>
+    <a href="tel:3854509833">(385) 450-9833</a>
+    <span class="contact-divider">·</span>
+    <a href="mailto:brandtnord27@gmail.com">brandtnord27@gmail.com</a>
+  </div>
+</header>
+
+<div class="resume-wrap">
+
+  <!-- Education -->
+  <section class="resume-section">
+    <div class="section-header">
+      <span class="section-label">Education</span>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="edu-entry">
+      <div class="entry-header">
+        <div class="entry-title">Brigham Young University</div>
+        <div class="entry-date">Sep 2025 – Present</div>
+      </div>
+      <div class="entry-sub">Provo, UT</div>
+    </div>
+
+    <div class="edu-entry">
+      <div class="entry-header">
+        <div class="entry-title">Pleasant Grove High School</div>
+        <div class="entry-date">Aug 2019 – May 2023</div>
+      </div>
+      <div class="entry-sub">Pleasant Grove, UT</div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section class="resume-section">
+    <div class="section-header">
+      <span class="section-label">Experience</span>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div class="entry-title">BYU Building Security</div>
+        <div class="entry-date">Oct 2025 – Present</div>
+      </div>
+      <div class="entry-sub">Provo, UT</div>
+      <ul>
+        <li>Maintained a safe, respectful, and welcoming campus environment through regular patrols and policy enforcement</li>
+        <li>Responded calmly to potentially confrontational situations while maintaining a positive environment</li>
+        <li>Attended regular safety seminars including first aid and crisis response trainings</li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div class="entry-title">Full Time Missionary</div>
+        <div class="entry-date">Jul 2023 – Jun 2025</div>
+      </div>
+      <div class="entry-sub">Norway Oslo Mission</div>
+      <ul>
+        <li>Led trainings, councils, and exchanges as trainer or district/zone leader for 12+ months</li>
+        <li>Served extensively with youth including leading activity nights and seminary</li>
+        <li>Gained extensive personal skills including fostering welcoming and supportive environments</li>
+        <li>Maintained emotional stability and professionalism in spiritually, emotionally, and physically demanding situations</li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <div class="entry-header">
+        <div class="entry-title">Sales Associate</div>
+        <div class="entry-date">Jun 2022 – Apr 2023</div>
+      </div>
+      <div class="entry-sub">Ace Hardware — Pleasant Grove, UT</div>
+      <ul>
+        <li>Improved customer experience by responding to inquiries, assisting with projects, and offering solutions</li>
+        <li>Maintained knowledge of inventory and promotions to provide accurate information to customers</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="resume-section">
+    <div class="section-header">
+      <span class="section-label">Skills</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="skills-grid">
+      <span class="skill-pill">Christlike Leadership</span>
+      <span class="skill-pill">Adaptability</span>
+      <span class="skill-pill">Teamwork</span>
+      <span class="skill-pill">Communication</span>
+      <span class="skill-pill">Accountability</span>
+      <span class="skill-pill">Spiritual Mentorship</span>
+      <span class="skill-pill">Youth Engagement</span>
+      <span class="skill-pill">Dependability</span>
+      <span class="skill-pill">Situational Awareness</span>
+      <span class="skill-pill">Resilience</span>
+    </div>
+  </section>
+
+  <!-- Honors -->
+  <section class="resume-section">
+    <div class="section-header">
+      <span class="section-label">Honors &amp; Accomplishments</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="honors-grid">
+      <div class="honor-item">4.0 GPA</div>
+      <div class="honor-item">AP Classes</div>
+      <div class="honor-item">Concurrent Enrollment Courses</div>
+      <div class="honor-item">Certificate of Biliteracy in Spanish (2023)</div>
+      <div class="honor-item">Honor Roll</div>
+      <div class="honor-item">NHS Member</div>
+      <div class="honor-item">Life Scout Award</div>
+      <div class="honor-item">Industry Cert: General Financial Literacy</div>
+      <div class="honor-item">Industry Cert: Business Office Specialist</div>
+      <div class="honor-item">Industry Cert: Biotechnology</div>
+      <div class="honor-item">Industry Cert: CAD Mechanical Design 2</div>
+      <div class="honor-item">Industry Cert: Woods 1</div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  &copy; 2025 Brandt Nordhagen
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
