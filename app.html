@@ -122,10 +122,158 @@ canvas.confetti {
 
 <script>
 
-const allQuestions = Array.from({length:30},(_,i)=>({
-  q:"Question "+(i+1),
-  options:["A","B","C","D"],
-  answer:Math.floor(Math.random()*4)
+const allQuestions = [
+  {
+    q: "Which club does Erling Haaland play for?",
+    options: ["Bayern Munich", "Manchester City", "Real Madrid", "Chelsea"],
+    answer: 1
+  },
+  {
+    q: "What is Manchester City's stadium?",
+    options: ["Old Trafford", "Etihad Stadium", "Anfield", "Camp Nou"],
+    answer: 1
+  },
+  {
+    q: "What position does Haaland play?",
+    options: ["Goalkeeper", "Defender", "Midfielder", "Striker"],
+    answer: 3
+  },
+  {
+    q: "What country is Haaland from?",
+    options: ["Sweden", "Norway", "Denmark", "Germany"],
+    answer: 1
+  },
+  {
+    q: "Who is Man City's manager?",
+    options: ["Klopp", "Guardiola", "Arteta", "Mourinho"],
+    answer: 1
+  },
+  {
+    q: "How many players on a team?",
+    options: ["9", "10", "11", "12"],
+    answer: 2
+  },
+  {
+    q: "Match length?",
+    options: ["80", "90", "100", "120"],
+    answer: 1
+  },
+  {
+    q: "Ball shape?",
+    options: ["Cube", "Sphere", "Oval", "Flat"],
+    answer: 1
+  },
+  {
+    q: "Goalkeeper can use?",
+    options: ["Hands", "Feet only", "Head", "None"],
+    answer: 0
+  },
+  {
+    q: "Messi country?",
+    options: ["Brazil", "Argentina", "Spain", "France"],
+    answer: 1
+  },
+  {
+    q: "Ronaldo country?",
+    options: ["Portugal", "Spain", "Italy", "Brazil"],
+    answer: 0
+  },
+  {
+    q: "Red card means?",
+    options: ["Goal", "Warning", "Send off", "Sub"],
+    answer: 2
+  },
+  {
+    q: "Yellow card?",
+    options: ["Goal", "Warning", "Sub", "Offside"],
+    answer: 1
+  },
+  {
+    q: "Offside?",
+    options: ["Too far ahead", "Out of bounds", "Foul", "Goal"],
+    answer: 0
+  },
+  {
+    q: "Penalty distance?",
+    options: ["8", "10", "12", "15"],
+    answer: 2
+  },
+  {
+    q: "Corner kick from?",
+    options: ["Center", "Corner", "Side", "Penalty"],
+    answer: 1
+  },
+  {
+    q: "Pitch surface?",
+    options: ["Grass", "Sand", "Ice", "Concrete"],
+    answer: 0
+  },
+  {
+    q: "Subs allowed?",
+    options: ["3", "5", "7", "9"],
+    answer: 1
+  },
+  {
+    q: "Half length?",
+    options: ["30", "40", "45", "60"],
+    answer: 2
+  },
+  {
+    q: "Man City rival?",
+    options: ["United", "Liverpool", "Arsenal", "Chelsea"],
+    answer: 0
+  },
+  {
+    q: "Premier League country?",
+    options: ["Spain", "England", "Italy", "Germany"],
+    answer: 1
+  },
+  {
+    q: "VAR means?",
+    options: ["Replay system", "Ref", "Goal", "Coach"],
+    answer: 0
+  },
+  {
+    q: "Etihad is a?",
+    options: ["Stadium", "Team", "League", "City"],
+    answer: 0
+  },
+  {
+    q: "Haaland former club?",
+    options: ["PSG", "Dortmund", "Barca", "Milan"],
+    answer: 1
+  },
+  {
+    q: "Champions League is?",
+    options: ["League", "Tournament", "Cup", "Friendly"],
+    answer: 1
+  },
+  {
+    q: "Ball size?",
+    options: ["3", "4", "5", "6"],
+    answer: 2
+  },
+  {
+    q: "Extra time?",
+    options: ["Yes", "No", "Sometimes", "Never"],
+    answer: 2
+  },
+  {
+    q: "Ref wears?",
+    options: ["Black", "Blue", "Red", "Green"],
+    answer: 0
+  },
+  {
+    q: "Man City jersey color?",
+    options: ["Red", "Blue", "Green", "Yellow"],
+    answer: 1
+  },
+  {
+    q: "Haaland is known for?",
+    options: ["Defense", "Speed & scoring", "Passing", "Goalkeeping"],
+    answer: 1
+  }
+];
 }));
 
 let questions=[], current=0, score=0, answered=false;
