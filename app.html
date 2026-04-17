@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soccer Trivia Quiz</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #0d0d0d;
+      color: #e8e8e8;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    nav {
+      width: 100%;
+      background-color: #1a1a2e;
+      padding: 14px 30px;
+      border-bottom: 2px solid #6aaee8;
+    }
+
+    nav a {
+      color: #6aaee8;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    nav a:hover { color: #97c4f0; text-decoration: underline; }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      padding: 40px 20px 60px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #6aaee8;
+      font-family: Georgia, serif;
+      margin-bottom: 6px;
+    }
+
+    .tagline {
+      text-align: center;
+      color: #888;
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
+
+    /* Score bar */
+    .scorebar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #141414;
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      padding: 12px 20px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .scorebar span { font-weight: 600; color: #6aaee8; font-size: 16px; }
+
+    /* Question card */
+    .card {
+      background: #141414;
+      border: 1px solid #2a2a3a;
+      border-radius: 10px;
+      padding: 28px 28px 24px;
+      margin-bottom: 20px;
+    }
+
+    .question-num {
+      font-size: 12px;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      color: #e8e8e8;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    /* Answer buttons */
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .answer-btn {
+      background: #1e1e2e;
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      color: #d0d0d0;
+      font-size: 14px;
+      padding: 14px 16px;
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.4;
+      transition: background 0.15s, border-color 0.15s;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .answer-btn:hover:not(:disabled) {
+      background: #252538;
+      border-color: #6aaee8;
+      color: #fff;
+    }
+
+    .answer-btn.correct {
+      background: #0f2e1a;
+      border-color: #2ea84f;
+      color: #5de88a;
+    }
+
+    .answer-btn.wrong {
+      background: #2e0f0f;
+      border-color: #a82e2e;
+      color: #e85d5d;
+    }
+
+    .answer-btn.reveal {
+      background: #0f2e1a;
+      border-color: #2ea84f;
+      color: #5de88a;
+    }
+
+    .answer-btn:disabled { cursor: default; }
+
+    /* Feedback */
+    .feedback {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #aaa;
+      min-height: 20px;
+      line-height: 1.5;
+    }
+
+    /* Next button */
+    .next-btn {
+      display: none;
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      background: #6aaee8;
+      color: #0d0d0d;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      transition: background 0.15s;
+    }
+
+    .next-btn:hover { background: #97c4f0; }
+
+    /* Results screen */
+    .results {
+      display: none;
+      text-align: center;
+    }
+
+    .results .big-score {
+      font-size: 4rem;
+      font-weight: 700;
+      color: #6aaee8;
+      line-height: 1;
+      margin: 16px 0 8px;
+    }
+
+    .results .grade {
+      font-size: 1.2rem;
+      color: #bbb;
+      margin-bottom: 28px;
+    }
+
+    .restart-btn {
+      padding: 14px 36px;
+      background: #6aaee8;
+      color: #0d0d0d;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .restart-btn:hover { background: #97c4f0; }
+
+    @media (max-width: 480px) {
+      .answers { grid-template-columns: 1fr; }
+      h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="scratch.html">← Back to Soccer Page</a>
+</nav>
+
+<div class="container">
+  <h1>Soccer Trivia Quiz</h1>
+  <p class="tagline">10 questions. How well do you know the beautiful game?</p>
+
+  <div class="scorebar">
+    <div>Question <span id="q-counter">1</span> of 10</div>
+    <div>Score: <span id="score-display">0</span></div>
+  </div>
+
+  <!-- Quiz screen -->
+  <div id="quiz-screen">
+    <div class="card">
+      <div class="question-num" id="q-num">Question 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <button class="next-btn" id="next-btn">Next question →</button>
+  </div>
+
+  <!-- Results screen -->
+  <div class="results card" id="results-screen">
+    <div style="font-size:1rem; color:#888;">Your final score</div>
+    <div class="big-score" id="final-score"></div>
+    <div class="grade" id="grade-text"></div>
+    <button class="restart-btn" onclick="startQuiz()">Play again</button>
+  </div>
+</div>
+
+<script>
+  const allQuestions = [
+    {
+      q: "Which club does Erling Haaland play for?",
+      options: ["Bayern Munich", "Manchester City", "Real Madrid", "Chelsea"],
+      answer: 1,
+      fact: "Haaland joined Man City from Borussia Dortmund in 2022."
+    },
+    {
+      q: "How many goals did Haaland score in his debut Premier League season (2022-23)?",
+      options: ["29", "36", "41", "44"],
+      answer: 2,
+      fact: "His 36 Premier League goals in 2022-23 broke the all-time single-season record."
+    },
+    {
+      q: "Which country does Erling Haaland represent internationally?",
+      options: ["Sweden", "Denmark", "Norway", "Germany"],
+      answer: 2,
+      fact: "Haaland was born in Leeds, England, but holds Norwegian nationality."
+    },
+    {
+      q: "Who manages Manchester City?",
+      options: ["Jose Mourinho", "Jurgen Klopp", "Pep Guardiola", "Mikel Arteta"],
+      answer: 2,
+      fact: "Pep Guardiola has managed Man City since 2016."
+    },
+    {
+      q: "What is Manchester City's home stadium called?",
+      options: ["Old Trafford", "Anfield", "Stamford Bridge", "Etihad Stadium"],
+      answer: 3,
+      fact: "The Etihad Stadium holds around 53,000 fans."
+    },
+    {
+      q: "Which country won the 2022 FIFA World Cup?",
+      options: ["Brazil", "France", "Argentina", "England"],
+      answer: 2,
+      fact: "Argentina beat France on penalties in one of the greatest World Cup finals ever."
+    },
+    {
+      q: "Who holds the record for the most goals in World Cup history?",
+      options: ["Pele", "Ronaldo (Brazil)", "Miroslav Klose", "Gerd Muller"],
+      answer: 2,
+      fact: "Miroslav Klose scored 16 World Cup goals across four tournaments for Germany."
+    },
+    {
+      q: "Which club has won the most UEFA Champions League titles?",
+      options: ["Barcelona", "Liverpool", "Real Madrid", "Bayern Munich"],
+      answer: 2,
+      fact: "Real Madrid have won the Champions League/European Cup a record 15 times."
+    },
+    {
+      q: "How long is a standard soccer match (excluding extra time)?",
+      options: ["80 minutes", "90 minutes", "100 minutes", "120 minutes"],
+      answer: 1,
+      fact: "A match is 2 halves of 45 minutes, plus stoppage time added by the referee."
+    },
+    {
+      q: "What color are Manchester City's home jerseys?",
+      options: ["Red", "Blue", "White", "Yellow"],
+      answer: 1,
+      fact: "Man City's sky blue home kit is one of the most recognizable in world football."
+    }
+  ];
+
+  let questions = [];
+  let current = 0;
+  let score = 0;
+  let answered = false;
+
+  function shuffle(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
+  }
+
+  function startQuiz() {
+    questions = shuffle(allQuestions).slice(0, 10);
+    current = 0;
+    score = 0;
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('results-screen').style.display = 'none';
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    answered = false;
+    const q = questions[current];
+    document.getElementById('q-counter').textContent = current + 1;
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('q-num').textContent = 'Question ' + (current + 1);
+    document.getElementById('q-text').textContent = q.q;
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('next-btn').style.display = 'none';
+
+    const answersDiv = document.getElementById('answers');
+    answersDiv.innerHTML = '';
+
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = opt;
+      btn.onclick = () => selectAnswer(i);
+      answersDiv.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(i) {
+    if (answered) return;
+    answered = true;
+
+    const q = questions[current];
+    const btns = document.querySelectorAll('.answer-btn');
+
+    btns.forEach(b => b.disabled = true);
+    btns[i].classList.add(i === q.answer ? 'correct' : 'wrong');
+    if (i !== q.answer) btns[q.answer].classList.add('reveal');
+
+    if (i === q.answer) {
+      score++;
+      document.getElementById('feedback').textContent = 'Correct! ' + q.fact;
+      document.getElementById('feedback').style.color = '#5de88a';
+    } else {
+      document.getElementById('feedback').textContent = 'Not quite. ' + q.fact;
+      document.getElementById('feedback').style.color = '#e85d5d';
+    }
+
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('next-btn').style.display = 'block';
+    document.getElementById('next-btn').textContent =
+      current < questions.length - 1 ? 'Next question →' : 'See results →';
+  }
+
+  document.getElementById('next-btn').onclick = () => {
+    current++;
+    if (current < questions.length) {
+      loadQuestion();
+    } else {
+      showResults();
+    }
+  };
+
+  function showResults() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    const rs = document.getElementById('results-screen');
+    rs.style.display = 'block';
+    document.getElementById('final-score').textContent = score + '/10';
+
+    let grade = '';
+    if (score === 10) grade = "Perfect score! You're a soccer genius.";
+    else if (score >= 8) grade = "Excellent! You really know your soccer.";
+    else if (score >= 6) grade = "Solid effort — solid soccer knowledge!";
+    else if (score >= 4) grade = "Not bad, but there's room to level up.";
+    else grade = "Keep watching more matches and try again!";
+
+    document.getElementById('grade-text').textContent = grade;
+  }
+
+  startQuiz();
+</script>
+</body>
+</html>
