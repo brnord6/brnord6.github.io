@@ -1,241 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soccer Trivia Quiz</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soccer Trivia Quiz</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-body {
-  background:#0d0d0d;
-  color:white;
-  font-family:Arial;
-  text-align:center;
-}
+    body {
+      background-color: #0d0d0d;
+      color: #e8e8e8;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
 
-nav {
-  background:#1a1a2e;
-  padding:10px;
-}
-nav a { color:#6aaee8; text-decoration:none; }
+    body.flash-correct { background-color: #0a2e14; }
+    body.flash-wrong   { background-color: #2e0a0a; }
 
-.container { max-width:700px; margin:auto; padding:20px; }
+    nav {
+      width: 100%;
+      background-color: #1a1a2e;
+      padding: 14px 30px;
+      border-bottom: 2px solid #6aaee8;
+    }
 
-.card {
-  background:#141414;
-  padding:20px;
-  border-radius:10px;
-  transition:0.4s;
-}
+    nav a {
+      color: #6aaee8;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      margin-right: 24px;
+    }
 
-/* FLASH */
-.flash-correct { animation:greenFlash 0.5s; }
-.flash-wrong { animation:redFlash 0.5s; }
+    nav a:hover { color: #97c4f0; text-decoration: underline; }
 
-@keyframes greenFlash {
-  50% { background:#00ff88; }
-}
-@keyframes redFlash {
-  50% { background:#ff3b3b; }
-}
+    .container {
+      width: 100%;
+      max-width: 680px;
+      padding: 40px 20px 60px;
+    }
 
-.answers {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #6aaee8;
+      font-family: Georgia, serif;
+      margin-bottom: 6px;
+    }
 
-.answer-btn {
-  padding:12px;
-  background:#1e1e2e;
-  border:none;
-  color:white;
-  cursor:pointer;
-}
+    .tagline {
+      text-align: center;
+      color: #888;
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
 
-/* KEEP SELECTED COLOR */
-.correct { background:#00cc66; color:black; }
-.wrong { background:#cc3333; }
+    .scorebar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #141414;
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      padding: 12px 20px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #aaa;
+    }
 
-.next-btn {
-  margin-top:10px;
-  padding:12px;
-  width:100%;
-  background:#6aaee8;
-  border:none;
-  cursor:pointer;
-}
+    .scorebar span { font-weight: 600; color: #6aaee8; font-size: 16px; }
 
-.results { display:none; }
+    .card {
+      background: #141414;
+      border: 1px solid #2a2a3a;
+      border-radius: 10px;
+      padding: 28px 28px 24px;
+      margin-bottom: 20px;
+    }
 
-canvas.confetti {
-  position:fixed;
-  top:0; left:0;
-  pointer-events:none;
-}
-</style>
+    .question-num {
+      font-size: 12px;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      color: #e8e8e8;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .answer-btn {
+      background: #1e1e2e;
+      border: 1px solid #2a2a3a;
+      border-radius: 8px;
+      color: #d0d0d0;
+      font-size: 14px;
+      padding: 14px 16px;
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.4;
+      transition: background 0.15s, border-color 0.15s;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .answer-btn:hover:not(:disabled) {
+      background: #252538;
+      border-color: #6aaee8;
+      color: #fff;
+    }
+
+    .answer-btn.correct {
+      background: #0f2e1a;
+      border-color: #2ea84f;
+      color: #5de88a;
+    }
+
+    .answer-btn.wrong {
+      background: #2e0f0f;
+      border-color: #a82e2e;
+      color: #e85d5d;
+    }
+
+    .answer-btn.reveal {
+      background: #0f2e1a;
+      border-color: #2ea84f;
+      color: #5de88a;
+    }
+
+    .answer-btn:disabled { cursor: default; }
+
+    .feedback {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #aaa;
+      min-height: 20px;
+      line-height: 1.5;
+    }
+
+    .next-btn {
+      display: none;
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      background: #6aaee8;
+      color: #0d0d0d;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      transition: background 0.15s;
+    }
+
+    .next-btn:hover { background: #97c4f0; }
+
+    .results {
+      display: none;
+      text-align: center;
+    }
+
+    .results .big-score {
+      font-size: 4rem;
+      font-weight: 700;
+      color: #6aaee8;
+      line-height: 1;
+      margin: 16px 0 8px;
+    }
+
+    .results .grade {
+      font-size: 1.2rem;
+      color: #bbb;
+      margin-bottom: 28px;
+    }
+
+    .restart-btn {
+      padding: 14px 36px;
+      background: #6aaee8;
+      color: #0d0d0d;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .restart-btn:hover { background: #97c4f0; }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @media (max-width: 480px) {
+      .answers { grid-template-columns: 1fr; }
+      h1 { font-size: 1.6rem; }
+    }
+  </style>
 </head>
-
 <body>
 
+<canvas id="confetti-canvas"></canvas>
+
 <nav>
-<a href="scratch.html">← Back to Soccer Page</a>
+  <a href="scratch.html">&#8592; Back to Soccer Page</a>
+  <a href="index.html">Professional Page</a>
 </nav>
 
 <div class="container">
+  <h1>Soccer Trivia Quiz</h1>
+  <p class="tagline">10 questions. How well do you know the beautiful game?</p>
 
-<div id="quiz">
-  <div class="card">
-    <h2 id="question"></h2>
-    <div class="answers" id="answers"></div>
+  <div class="scorebar">
+    <div>Question <span id="q-counter">1</span> of 10</div>
+    <div>Score: <span id="score-display">0</span></div>
   </div>
-  <button class="next-btn" onclick="next()">Next</button>
-</div>
 
-<div class="results" id="results">
-  <h2 id="score"></h2>
-  <button onclick="start()">Play Again</button>
-</div>
+  <div id="quiz-screen">
+    <div class="card">
+      <div class="question-num" id="q-num">Question 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <button class="next-btn" id="next-btn">Next question &#8594;</button>
+  </div>
 
+  <div class="results card" id="results-screen">
+    <div style="font-size:1rem; color:#888;">Your final score</div>
+    <div class="big-score" id="final-score"></div>
+    <div class="grade" id="grade-text"></div>
+    <button class="restart-btn" onclick="startQuiz()">Play again</button>
+  </div>
 </div>
 
 <script>
+  const allQuestions = [
+    { q: "Which club does Erling Haaland play for?", options: ["Bayern Munich", "Manchester City", "Real Madrid", "Chelsea"], answer: 1, fact: "Haaland joined Man City from Borussia Dortmund in 2022." },
+    { q: "How many Premier League goals did Haaland score in his debut season (2022-23)?", options: ["29", "36", "41", "44"], answer: 1, fact: "His 36 PL goals shattered the all-time single-season record." },
+    { q: "Which country does Erling Haaland represent internationally?", options: ["Sweden", "Denmark", "Norway", "Germany"], answer: 2, fact: "Haaland was born in Leeds, England, but holds Norwegian nationality." },
+    { q: "Who manages Manchester City?", options: ["Jose Mourinho", "Jurgen Klopp", "Pep Guardiola", "Mikel Arteta"], answer: 2, fact: "Pep Guardiola has managed Man City since 2016." },
+    { q: "What is Manchester City's home stadium called?", options: ["Old Trafford", "Anfield", "Stamford Bridge", "Etihad Stadium"], answer: 3, fact: "The Etihad Stadium holds around 53,000 fans." },
+    { q: "Which country won the 2022 FIFA World Cup?", options: ["Brazil", "France", "Argentina", "England"], answer: 2, fact: "Argentina beat France on penalties in one of the greatest finals ever." },
+    { q: "Who holds the record for most World Cup goals?", options: ["Pele", "Ronaldo (Brazil)", "Miroslav Klose", "Gerd Muller"], answer: 2, fact: "Miroslav Klose scored 16 World Cup goals across four tournaments for Germany." },
+    { q: "Which club has won the most UEFA Champions League titles?", options: ["Barcelona", "Liverpool", "Real Madrid", "Bayern Munich"], answer: 2, fact: "Real Madrid have won the Champions League/European Cup a record 15 times." },
+    { q: "How long is a standard soccer match (excluding extra time)?", options: ["80 minutes", "90 minutes", "100 minutes", "120 minutes"], answer: 1, fact: "A match is 2 halves of 45 minutes, plus stoppage time added by the referee." },
+    { q: "What color are Manchester City's home jerseys?", options: ["Red", "Blue", "White", "Yellow"], answer: 1, fact: "Man City's sky blue home kit is one of the most recognizable in world football." },
+    { q: "In which city was Erling Haaland born?", options: ["Oslo", "Leeds", "Dortmund", "Manchester"], answer: 1, fact: "Haaland was born in Leeds while his father Alfie played for Leeds United." },
+    { q: "Which club did Haaland play for before Manchester City?", options: ["RB Salzburg", "Ajax", "Borussia Dortmund", "Juventus"], answer: 2, fact: "Haaland moved from Borussia Dortmund to Man City in summer 2022." },
+    { q: "How many times has Manchester City won the Premier League?", options: ["4", "6", "9", "11"], answer: 2, fact: "Man City won their 9th title in 2023-24." },
+    { q: "What award is given to the best player at the FIFA World Cup?", options: ["Golden Boot", "Golden Ball", "Golden Glove", "Silver Ball"], answer: 1, fact: "The Golden Ball goes to the tournament's best player. Messi won it in 2022." },
+    { q: "Which trophy did Man City win in 2023 to complete a treble?", options: ["FA Cup", "UEFA Champions League", "Carabao Cup", "Europa League"], answer: 1, fact: "Man City won the Premier League, FA Cup, and Champions League in 2022-23." },
+    { q: "What nationality is Pep Guardiola?", options: ["Portuguese", "Italian", "Spanish", "Argentine"], answer: 2, fact: "Guardiola was born in Santpedor, Catalonia, Spain in 1971." },
+    { q: "Which Premier League club is Manchester City's biggest rival?", options: ["Liverpool", "Manchester United", "Arsenal", "Chelsea"], answer: 1, fact: "The Manchester Derby between City and United is one of the fiercest in England." },
+    { q: "What is the name of the award given to the top scorer at the World Cup?", options: ["Golden Ball", "Golden Boot", "Golden Glove", "Platinum Boot"], answer: 1, fact: "The Golden Boot goes to the tournament's top scorer." },
+    { q: "How many players are on the field per team in a soccer match?", options: ["9", "10", "11", "12"], answer: 2, fact: "Each team fields 11 players, including the goalkeeper." },
+    { q: "Which country has won the most FIFA World Cups?", options: ["Germany", "Italy", "Argentina", "Brazil"], answer: 3, fact: "Brazil has won the World Cup 5 times — 1958, 1962, 1970, 1994, and 2002." },
+    { q: "What shirt number does Haaland wear at Manchester City?", options: ["7", "9", "10", "11"], answer: 1, fact: "Haaland wears the iconic number 9 striker's shirt at Man City." },
+    { q: "Which competition did Man City win for the first time in 2023?", options: ["Europa League", "UEFA Champions League", "FA Cup", "Club World Cup"], answer: 1, fact: "Man City beat Inter Milan 1-0 in Istanbul to win their first ever Champions League." },
+    { q: "What is the maximum number of substitutes allowed in a modern soccer match?", options: ["3", "4", "5", "6"], answer: 2, fact: "FIFA rules now allow 5 substitutions per team per match." },
+    { q: "Who won the 2023 Ballon d'Or?", options: ["Erling Haaland", "Kylian Mbappe", "Lionel Messi", "Vinicius Jr"], answer: 0, fact: "Haaland won the 2023 Ballon d'Or after his record-breaking treble-winning season." },
+    { q: "Which team colors does Manchester City NOT wear?", options: ["Sky blue", "White", "Black", "Yellow"], answer: 2, fact: "Man City's kit colours are sky blue and white. They don't wear a black kit." },
+    { q: "Haaland's father Alfie Haaland played for which English club?", options: ["Manchester City", "Leeds United", "Nottingham Forest", "All three"], answer: 3, fact: "Alfie Haaland played for Nottingham Forest, Leeds United, and Man City." },
+    { q: "How old was Haaland when he made his Champions League debut?", options: ["17", "18", "19", "20"], answer: 1, fact: "Haaland debuted in the Champions League aged 18 while at RB Salzburg." },
+    { q: "Which stadium hosts the UEFA Champions League final most frequently?", options: ["Wembley", "Camp Nou", "Santiago Bernabeu", "No single stadium hosts it most"], answer: 3, fact: "The final rotates between neutral venues across Europe each year." },
+    { q: "What does VAR stand for in soccer?", options: ["Video Assistant Referee", "Virtual Accuracy Review", "Video Action Replay", "Visual Aid Referee"], answer: 0, fact: "VAR (Video Assistant Referee) was introduced to review key match decisions." },
+    { q: "Which country hosted the 2022 FIFA World Cup?", options: ["Russia", "Brazil", "Qatar", "United States"], answer: 2, fact: "Qatar hosted the 2022 World Cup — the first in the Middle East." }
+  ];
 
-const allQuestions = [
-{q:"Haaland plays for?",o:["Bayern","Man City","Madrid","Chelsea"],a:1},
-{q:"City stadium?",o:["Old Trafford","Etihad","Anfield","Camp Nou"],a:1},
-{q:"Haaland position?",o:["GK","Def","Mid","Striker"],a:3},
-{q:"Haaland country?",o:["Sweden","Norway","Denmark","Germany"],a:1},
-{q:"Manager City?",o:["Klopp","Pep","Arteta","Mourinho"],a:1},
-{q:"Players per team?",o:["9","10","11","12"],a:2},
-{q:"Match length?",o:["80","90","100","120"],a:1},
-{q:"Ball shape?",o:["Cube","Sphere","Oval","Flat"],a:1},
-{q:"GK can use?",o:["Hands","Feet","Head","None"],a:0},
-{q:"Messi country?",o:["Brazil","Argentina","Spain","France"],a:1},
+  let questions = [], current = 0, score = 0, answered = false;
+  let confettiInterval = null;
 
-{q:"Ronaldo country?",o:["Portugal","Spain","Italy","Brazil"],a:0},
-{q:"Red card?",o:["Goal","Warn","Send off","Sub"],a:2},
-{q:"Yellow card?",o:["Goal","Warn","Sub","Offside"],a:1},
-{q:"Offside?",o:["Ahead","Out","Foul","Goal"],a:0},
-{q:"Penalty spot?",o:["8","10","12","15"],a:2},
-{q:"Corner from?",o:["Center","Corner","Side","Penalty"],a:1},
-{q:"Pitch surface?",o:["Grass","Sand","Ice","Concrete"],a:0},
-{q:"Subs allowed?",o:["3","5","7","9"],a:1},
-{q:"Half length?",o:["30","40","45","60"],a:2},
-{q:"City rival?",o:["United","Liverpool","Arsenal","Chelsea"],a:0},
+  function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
-{q:"League country?",o:["Spain","England","Italy","Germany"],a:1},
-{q:"VAR?",o:["Replay","Ref","Goal","Coach"],a:0},
-{q:"Etihad is?",o:["Stadium","Team","League","City"],a:0},
-{q:"Haaland old club?",o:["PSG","Dortmund","Barca","Milan"],a:1},
-{q:"UCL?",o:["League","Tournament","Cup","Friendly"],a:1},
-{q:"Ball size?",o:["3","4","5","6"],a:2},
-{q:"Extra time?",o:["Yes","No","Sometimes","Never"],a:2},
-{q:"Ref wears?",o:["Black","Blue","Red","Green"],a:0},
-{q:"City color?",o:["Red","Blue","Green","Yellow"],a:1},
-{q:"Haaland known for?",o:["Defense","Scoring","Passing","GK"],a:1}
-];
-
-let questions=[], current=0, score=0, locked=false;
-
-function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
-
-function start(){
-  questions = shuffle(allQuestions).slice(0,10);
-  current=0; score=0;
-  document.getElementById('quiz').style.display='block';
-  document.getElementById('results').style.display='none';
-  load();
-}
-
-function load(){
-  locked=false;
-  const q = questions[current];
-  document.getElementById('question').textContent=q.q;
-
-  const div=document.getElementById('answers');
-  div.innerHTML='';
-
-  q.o.forEach((opt,i)=>{
-    const b=document.createElement('button');
-    b.className='answer-btn';
-    b.textContent=opt;
-    b.onclick=()=>select(i,b);
-    div.appendChild(b);
-  });
-}
-
-function select(i,btn){
-  if(locked) return;
-  locked=true;
-
-  const q=questions[current];
-  const card=document.querySelector('.card');
-  const buttons=document.querySelectorAll('.answer-btn');
-
-  buttons.forEach(b=>b.disabled=true);
-
-  if(i===q.a){
-    score++;
-    btn.classList.add('correct');
-    card.classList.add('flash-correct');
-  } else {
-    btn.classList.add('wrong');
-    buttons[q.a].classList.add('correct');
-    card.classList.add('flash-wrong');
+  function startQuiz() {
+    questions = shuffle(allQuestions).slice(0, 10);
+    current = 0; score = 0; answered = false;
+    stopConfetti();
+    document.getElementById('quiz-screen').style.display = 'block';
+    document.getElementById('results-screen').style.display = 'none';
+    loadQuestion();
   }
 
-  setTimeout(()=>card.classList.remove('flash-correct','flash-wrong'),500);
-}
-
-function next(){
-  current++;
-  if(current<questions.length){
-    load();
-  } else {
-    end();
-  }
-}
-
-function end(){
-  document.getElementById('quiz').style.display='none';
-  document.getElementById('results').style.display='block';
-  document.getElementById('score').textContent=score+"/10";
-
-  if(score===10) confetti();
-}
-
-/* CONFETTI */
-function confetti(){
-  const c=document.createElement('canvas');
-  c.className='confetti';
-  document.body.appendChild(c);
-  const ctx=c.getContext('2d');
-  c.width=window.innerWidth;
-  c.height=window.innerHeight;
-
-  const pieces=Array.from({length:200},()=>({
-    x:Math.random()*c.width,
-    y:Math.random()*c.height,
-    dy:Math.random()*3+2
-  }));
-
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    pieces.forEach(p=>{
-      ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
-      ctx.fillRect(p.x,p.y,4,4);
-      p.y+=p.dy;
-      if(p.y>c.height)p.y=0;
+  function loadQuestion() {
+    answered = false;
+    const q = questions[current];
+    document.getElementById('q-counter').textContent = current + 1;
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('q-num').textContent = 'Question ' + (current + 1);
+    document.getElementById('q-text').textContent = q.q;
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').style.color = '#aaa';
+    document.getElementById('next-btn').style.display = 'none';
+    const answersDiv = document.getElementById('answers');
+    answersDiv.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = opt;
+      btn.onclick = () => selectAnswer(i);
+      answersDiv.appendChild(btn);
     });
-    requestAnimationFrame(draw);
   }
-  draw();
-}
 
-start();
+  function flashBody(correct) {
+    const cls = correct ? 'flash-correct' : 'flash-wrong';
+    document.body.classList.add(cls);
+    setTimeout(() => document.body.classList.remove(cls), 600);
+  }
 
+  function selectAnswer(i) {
+    if (answered) return;
+    answered = true;
+    const q = questions[current];
+    const btns = document.querySelectorAll('.answer-btn');
+    btns.forEach(b => b.disabled = true);
+    const correct = i === q.answer;
+    btns[i].classList.add(correct ? 'correct' : 'wrong');
+    if (!correct) btns[q.answer].classList.add('reveal');
+    flashBody(correct);
+    if (correct) {
+      score++;
+      document.getElementById('feedback').textContent = 'Correct! ' + q.fact;
+      document.getElementById('feedback').style.color = '#5de88a';
+    } else {
+      document.getElementById('feedback').textContent = 'Not quite. ' + q.fact;
+      document.getElementById('feedback').style.color = '#e85d5d';
+    }
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('next-btn').style.display = 'block';
+    document.getElementById('next-btn').textContent =
+      current < questions.length - 1 ? 'Next question \u2192' : 'See results \u2192';
+  }
+
+  document.getElementById('next-btn').onclick = () => {
+    current++;
+    if (current < questions.length) loadQuestion();
+    else showResults();
+  };
+
+  function showResults() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    const rs = document.getElementById('results-screen');
+    rs.style.display = 'block';
+    document.getElementById('final-score').textContent = score + '/10';
+    let grade = '';
+    if (score === 10) { grade = "Perfect score! You're a soccer genius!"; launchConfetti(); }
+    else if (score >= 8) grade = "Excellent! You really know your soccer.";
+    else if (score >= 6) grade = "Solid effort — solid soccer knowledge!";
+    else if (score >= 4) grade = "Not bad, but there's room to level up.";
+    else grade = "Keep watching more matches and try again!";
+    document.getElementById('grade-text').textContent = grade;
+  }
+
+  function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const pieces = Array.from({length: 150}, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      w: Math.random() * 10 + 5,
+      h: Math.random() * 6 + 4,
+      color: ['#6aaee8','#5de88a','#e8d85d','#e85d5d','#c45de8','#e8a05d'][Math.floor(Math.random()*6)],
+      speed: Math.random() * 3 + 2,
+      angle: Math.random() * 360,
+      spin: Math.random() * 4 - 2
+    }));
+    let frame = 0;
+    confettiInterval = setInterval(() => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        p.y += p.speed;
+        p.angle += p.spin;
+        if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+        ctx.save();
+        ctx.translate(p.x + p.w/2, p.y + p.h/2);
+        ctx.rotate(p.angle * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      });
+      frame++;
+      if (frame > 300) stopConfetti();
+    }, 16);
+  }
+
+  function stopConfetti() {
+    if (confettiInterval) { clearInterval(confettiInterval); confettiInterval = null; }
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  startQuiz();
 </script>
-
 </body>
 </html>
