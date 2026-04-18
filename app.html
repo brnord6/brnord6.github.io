@@ -6,55 +6,43 @@
 <title>Soccer Trivia Quiz</title>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   background:#0d0d0d;
-  color:#e8e8e8;
+  color:white;
   font-family:Arial;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  text-align:center;
 }
 
 nav {
-  width:100%;
   background:#1a1a2e;
-  padding:14px;
+  padding:10px;
 }
-
 nav a { color:#6aaee8; text-decoration:none; }
 
-.container { max-width:700px; padding:40px; }
+.container { max-width:700px; margin:auto; padding:20px; }
 
 .card {
   background:#141414;
-  padding:25px;
+  padding:20px;
   border-radius:10px;
-  transition:0.3s;
+  transition:0.4s;
 }
 
-/* STRONG FLASH */
-.flash-correct { animation:flashGreen 0.6s ease; }
-.flash-wrong { animation:flashRed 0.6s ease; }
+/* FLASH */
+.flash-correct { animation:greenFlash 0.5s; }
+.flash-wrong { animation:redFlash 0.5s; }
 
-@keyframes flashGreen {
-  0%{background:#141414;}
-  50%{background:#00ff88;}
-  100%{background:#141414;}
+@keyframes greenFlash {
+  50% { background:#00ff88; }
 }
-
-@keyframes flashRed {
-  0%{background:#141414;}
-  50%{background:#ff3b3b;}
-  100%{background:#141414;}
+@keyframes redFlash {
+  50% { background:#ff3b3b; }
 }
 
 .answers {
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
-  margin-top:15px;
 }
 
 .answer-btn {
@@ -63,19 +51,11 @@ nav a { color:#6aaee8; text-decoration:none; }
   border:none;
   color:white;
   cursor:pointer;
-  transition:0.2s;
 }
 
-/* KEEP SELECTED HIGHLIGHT */
-.answer-btn.correct { background:#00cc66; color:black; }
-.answer-btn.wrong { background:#cc3333; }
-.answer-btn.reveal { outline:3px solid #00ff88; }
-
-.feedback {
-  margin-top:15px;
-  font-size:20px;
-  font-weight:bold;
-}
+/* KEEP SELECTED COLOR */
+.correct { background:#00cc66; color:black; }
+.wrong { background:#cc3333; }
 
 .next-btn {
   margin-top:10px;
@@ -86,7 +66,7 @@ nav a { color:#6aaee8; text-decoration:none; }
   cursor:pointer;
 }
 
-.results { display:none; text-align:center; }
+.results { display:none; }
 
 canvas.confetti {
   position:fixed;
@@ -104,18 +84,17 @@ canvas.confetti {
 
 <div class="container">
 
-<div id="quiz-screen">
+<div id="quiz">
   <div class="card">
-    <h2 id="q-text"></h2>
+    <h2 id="question"></h2>
     <div class="answers" id="answers"></div>
-    <div class="feedback" id="feedback"></div>
   </div>
-  <button class="next-btn" id="next-btn">Next</button>
+  <button class="next-btn" onclick="next()">Next</button>
 </div>
 
-<div class="results" id="results-screen">
-  <h2 id="final-score"></h2>
-  <button onclick="startQuiz()">Play Again</button>
+<div class="results" id="results">
+  <h2 id="score"></h2>
+  <button onclick="start()">Play Again</button>
 </div>
 
 </div>
@@ -123,191 +102,72 @@ canvas.confetti {
 <script>
 
 const allQuestions = [
-  {
-    q: "Which club does Erling Haaland play for?",
-    options: ["Bayern Munich", "Manchester City", "Real Madrid", "Chelsea"],
-    answer: 1
-  },
-  {
-    q: "What is Manchester City's stadium?",
-    options: ["Old Trafford", "Etihad Stadium", "Anfield", "Camp Nou"],
-    answer: 1
-  },
-  {
-    q: "What position does Haaland play?",
-    options: ["Goalkeeper", "Defender", "Midfielder", "Striker"],
-    answer: 3
-  },
-  {
-    q: "What country is Haaland from?",
-    options: ["Sweden", "Norway", "Denmark", "Germany"],
-    answer: 1
-  },
-  {
-    q: "Who is Man City's manager?",
-    options: ["Klopp", "Guardiola", "Arteta", "Mourinho"],
-    answer: 1
-  },
-  {
-    q: "How many players on a team?",
-    options: ["9", "10", "11", "12"],
-    answer: 2
-  },
-  {
-    q: "Match length?",
-    options: ["80", "90", "100", "120"],
-    answer: 1
-  },
-  {
-    q: "Ball shape?",
-    options: ["Cube", "Sphere", "Oval", "Flat"],
-    answer: 1
-  },
-  {
-    q: "Goalkeeper can use?",
-    options: ["Hands", "Feet only", "Head", "None"],
-    answer: 0
-  },
-  {
-    q: "Messi country?",
-    options: ["Brazil", "Argentina", "Spain", "France"],
-    answer: 1
-  },
-  {
-    q: "Ronaldo country?",
-    options: ["Portugal", "Spain", "Italy", "Brazil"],
-    answer: 0
-  },
-  {
-    q: "Red card means?",
-    options: ["Goal", "Warning", "Send off", "Sub"],
-    answer: 2
-  },
-  {
-    q: "Yellow card?",
-    options: ["Goal", "Warning", "Sub", "Offside"],
-    answer: 1
-  },
-  {
-    q: "Offside?",
-    options: ["Too far ahead", "Out of bounds", "Foul", "Goal"],
-    answer: 0
-  },
-  {
-    q: "Penalty distance?",
-    options: ["8", "10", "12", "15"],
-    answer: 2
-  },
-  {
-    q: "Corner kick from?",
-    options: ["Center", "Corner", "Side", "Penalty"],
-    answer: 1
-  },
-  {
-    q: "Pitch surface?",
-    options: ["Grass", "Sand", "Ice", "Concrete"],
-    answer: 0
-  },
-  {
-    q: "Subs allowed?",
-    options: ["3", "5", "7", "9"],
-    answer: 1
-  },
-  {
-    q: "Half length?",
-    options: ["30", "40", "45", "60"],
-    answer: 2
-  },
-  {
-    q: "Man City rival?",
-    options: ["United", "Liverpool", "Arsenal", "Chelsea"],
-    answer: 0
-  },
-  {
-    q: "Premier League country?",
-    options: ["Spain", "England", "Italy", "Germany"],
-    answer: 1
-  },
-  {
-    q: "VAR means?",
-    options: ["Replay system", "Ref", "Goal", "Coach"],
-    answer: 0
-  },
-  {
-    q: "Etihad is a?",
-    options: ["Stadium", "Team", "League", "City"],
-    answer: 0
-  },
-  {
-    q: "Haaland former club?",
-    options: ["PSG", "Dortmund", "Barca", "Milan"],
-    answer: 1
-  },
-  {
-    q: "Champions League is?",
-    options: ["League", "Tournament", "Cup", "Friendly"],
-    answer: 1
-  },
-  {
-    q: "Ball size?",
-    options: ["3", "4", "5", "6"],
-    answer: 2
-  },
-  {
-    q: "Extra time?",
-    options: ["Yes", "No", "Sometimes", "Never"],
-    answer: 2
-  },
-  {
-    q: "Ref wears?",
-    options: ["Black", "Blue", "Red", "Green"],
-    answer: 0
-  },
-  {
-    q: "Man City jersey color?",
-    options: ["Red", "Blue", "Green", "Yellow"],
-    answer: 1
-  },
-  {
-    q: "Haaland is known for?",
-    options: ["Defense", "Speed & scoring", "Passing", "Goalkeeping"],
-    answer: 1
-  }
+{q:"Haaland plays for?",o:["Bayern","Man City","Madrid","Chelsea"],a:1},
+{q:"City stadium?",o:["Old Trafford","Etihad","Anfield","Camp Nou"],a:1},
+{q:"Haaland position?",o:["GK","Def","Mid","Striker"],a:3},
+{q:"Haaland country?",o:["Sweden","Norway","Denmark","Germany"],a:1},
+{q:"Manager City?",o:["Klopp","Pep","Arteta","Mourinho"],a:1},
+{q:"Players per team?",o:["9","10","11","12"],a:2},
+{q:"Match length?",o:["80","90","100","120"],a:1},
+{q:"Ball shape?",o:["Cube","Sphere","Oval","Flat"],a:1},
+{q:"GK can use?",o:["Hands","Feet","Head","None"],a:0},
+{q:"Messi country?",o:["Brazil","Argentina","Spain","France"],a:1},
+
+{q:"Ronaldo country?",o:["Portugal","Spain","Italy","Brazil"],a:0},
+{q:"Red card?",o:["Goal","Warn","Send off","Sub"],a:2},
+{q:"Yellow card?",o:["Goal","Warn","Sub","Offside"],a:1},
+{q:"Offside?",o:["Ahead","Out","Foul","Goal"],a:0},
+{q:"Penalty spot?",o:["8","10","12","15"],a:2},
+{q:"Corner from?",o:["Center","Corner","Side","Penalty"],a:1},
+{q:"Pitch surface?",o:["Grass","Sand","Ice","Concrete"],a:0},
+{q:"Subs allowed?",o:["3","5","7","9"],a:1},
+{q:"Half length?",o:["30","40","45","60"],a:2},
+{q:"City rival?",o:["United","Liverpool","Arsenal","Chelsea"],a:0},
+
+{q:"League country?",o:["Spain","England","Italy","Germany"],a:1},
+{q:"VAR?",o:["Replay","Ref","Goal","Coach"],a:0},
+{q:"Etihad is?",o:["Stadium","Team","League","City"],a:0},
+{q:"Haaland old club?",o:["PSG","Dortmund","Barca","Milan"],a:1},
+{q:"UCL?",o:["League","Tournament","Cup","Friendly"],a:1},
+{q:"Ball size?",o:["3","4","5","6"],a:2},
+{q:"Extra time?",o:["Yes","No","Sometimes","Never"],a:2},
+{q:"Ref wears?",o:["Black","Blue","Red","Green"],a:0},
+{q:"City color?",o:["Red","Blue","Green","Yellow"],a:1},
+{q:"Haaland known for?",o:["Defense","Scoring","Passing","GK"],a:1}
 ];
-}));
 
-let questions=[], current=0, score=0, answered=false;
+let questions=[], current=0, score=0, locked=false;
 
-function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
 
-function startQuiz(){
-  questions=shuffle(allQuestions).slice(0,10);
+function start(){
+  questions = shuffle(allQuestions).slice(0,10);
   current=0; score=0;
-  document.getElementById('quiz-screen').style.display='block';
-  document.getElementById('results-screen').style.display='none';
-  loadQuestion();
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('results').style.display='none';
+  load();
 }
 
-function loadQuestion(){
-  answered=false;
-  const q=questions[current];
-  document.getElementById('q-text').textContent=q.q;
-  document.getElementById('feedback').textContent="";
-  const answersDiv=document.getElementById('answers');
-  answersDiv.innerHTML='';
+function load(){
+  locked=false;
+  const q = questions[current];
+  document.getElementById('question').textContent=q.q;
 
-  q.options.forEach((opt,i)=>{
-    const btn=document.createElement('button');
-    btn.className='answer-btn';
-    btn.textContent=opt;
-    btn.onclick=()=>selectAnswer(i,btn);
-    answersDiv.appendChild(btn);
+  const div=document.getElementById('answers');
+  div.innerHTML='';
+
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='answer-btn';
+    b.textContent=opt;
+    b.onclick=()=>select(i,b);
+    div.appendChild(b);
   });
 }
 
-function selectAnswer(i,btn){
-  if(answered) return;
-  answered=true;
+function select(i,btn){
+  if(locked) return;
+  locked=true;
 
   const q=questions[current];
   const card=document.querySelector('.card');
@@ -315,68 +175,67 @@ function selectAnswer(i,btn){
 
   buttons.forEach(b=>b.disabled=true);
 
-  if(i===q.answer){
+  if(i===q.a){
     score++;
     btn.classList.add('correct');
     card.classList.add('flash-correct');
-    document.getElementById('feedback').textContent="CORRECT";
   } else {
     btn.classList.add('wrong');
-    buttons[q.answer].classList.add('reveal');
+    buttons[q.a].classList.add('correct');
     card.classList.add('flash-wrong');
-    document.getElementById('feedback').textContent="INCORRECT";
   }
 
-  setTimeout(()=>card.classList.remove('flash-correct','flash-wrong'),600);
+  setTimeout(()=>card.classList.remove('flash-correct','flash-wrong'),500);
 }
 
-document.getElementById('next-btn').onclick=()=>{
+function next(){
   current++;
   if(current<questions.length){
-    loadQuestion();
+    load();
   } else {
-    showResults();
+    end();
   }
-};
+}
 
-function showResults(){
-  document.getElementById('quiz-screen').style.display='none';
-  document.getElementById('results-screen').style.display='block';
-  document.getElementById('final-score').textContent=score+"/10";
+function end(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  document.getElementById('score').textContent=score+"/10";
 
-  if(score===10) launchConfetti();
+  if(score===10) confetti();
 }
 
 /* CONFETTI */
-function launchConfetti(){
-  const canvas=document.createElement('canvas');
-  canvas.className='confetti';
-  document.body.appendChild(canvas);
-  const ctx=canvas.getContext('2d');
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
+function confetti(){
+  const c=document.createElement('canvas');
+  c.className='confetti';
+  document.body.appendChild(c);
+  const ctx=c.getContext('2d');
+  c.width=window.innerWidth;
+  c.height=window.innerHeight;
 
   const pieces=Array.from({length:200},()=>({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    dy:Math.random()*4+2
+    x:Math.random()*c.width,
+    y:Math.random()*c.height,
+    dy:Math.random()*3+2
   }));
 
   function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0,0,c.width,c.height);
     pieces.forEach(p=>{
       ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
       ctx.fillRect(p.x,p.y,4,4);
       p.y+=p.dy;
-      if(p.y>canvas.height)p.y=0;
+      if(p.y>c.height)p.y=0;
     });
     requestAnimationFrame(draw);
   }
   draw();
 }
 
-startQuiz();
+start();
 
 </script>
+
 </body>
 </html>
